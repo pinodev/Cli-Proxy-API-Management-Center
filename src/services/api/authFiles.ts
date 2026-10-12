@@ -293,8 +293,11 @@ export const normalizeAuthFilesResponse = (
   payload: AuthFilesResponse,
   receivedAtMs = Date.now()
 ): AuthFilesResponse => {
+  if (!Array.isArray(payload?.files)) {
+    throw new Error('Credential data is unavailable.');
+  }
   const observedAt = normalizeCooldownTimestamp(payload?.observed_at);
-  const files = Array.isArray(payload?.files) ? payload.files : [];
+  const files = payload.files;
   const grouped = new Map<string, AuthFileEntry[]>();
 
   files.forEach((entry) => {

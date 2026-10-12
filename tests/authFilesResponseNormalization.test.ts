@@ -6,6 +6,23 @@ const responseWithRawFiles = (files: Array<Record<string, unknown>>): AuthFilesR
   ({ files }) as unknown as AuthFilesResponse;
 
 describe('auth-files response normalization', () => {
+  test('does not report a missing credential collection as an empty pool', () => {
+    for (const malformed of [null, {}, { credentials: [] }, { files: null }]) {
+      expect(() => normalizeAuthFilesResponse(malformed as unknown as AuthFilesResponse)).toThrow();
+    }
+    expect(normalizeAuthFilesResponse(responseWithRawFiles([])).files).toHaveLength(0);
+  });
+
+  test('counts unavailable proxy entries instead of treating them as absent', () => {
+    const result = normalizeAuthFilesResponse(responseWithRawFiles([
+      { name: 'fixture-claude.json', type: 'claude', disabled: false, unavailable: true, status: 'error' },
+      { name: 'fixture-codex.json', type: 'codex', disabled: false, unavailable: true, status: 'error' },
+    ]));
+    expect(result.total).toBe(2);
+    expect(result.files).toHaveLength(2);
+    expect(result.files.every((file) => file.unavailable)).toBe(true);
+  });
+
   test('normalizes WRR weights while preserving zero and negative values', () => {
     const result = normalizeAuthFilesResponse(
       responseWithRawFiles([

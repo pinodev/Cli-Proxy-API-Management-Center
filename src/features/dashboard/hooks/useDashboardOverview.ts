@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { authFilesApi } from '@/services/api';
+import { apiClient } from '@/services/api/client';
+import { useInterval } from '@/hooks/useInterval';
 import { useAuthStore, useConfigStore, useModelsStore } from '@/stores';
 import { useApiKeysForModels } from '@/hooks/useApiKeysForModels';
 import { useProviderRecentRequests } from '@/components/providers/hooks/useProviderRecentRequests';
@@ -128,16 +130,48 @@ export function useDashboardOverview() {
   });
 
   const [authFiles, setAuthFiles] = useState<AuthFileItem[] | null>(null);
+  const authFilesRequest = useRef<{
+    revision: number;
+    token: symbol;
+    promise: Promise<void>;
+  } | null>(null);
+
+  useEffect(() => {
+    setAuthFiles(null);
+    return () => {
+      authFilesRequest.current = null;
+    };
+  }, [apiBase, connected]);
 
   const loadAuthFiles = useCallback(async () => {
     if (!connected) return;
-    try {
-      const response = await authFilesApi.list();
-      setAuthFiles(response.files);
-    } catch {
-      setAuthFiles(null);
+    const revision = apiClient.getConnectionRevision();
+    if (authFilesRequest.current?.revision === revision) {
+      return authFilesRequest.current.promise;
     }
+    const token = Symbol();
+    const request = (async () => {
+      try {
+        const response = await authFilesApi.list();
+        if (
+          revision === apiClient.getConnectionRevision() &&
+          authFilesRequest.current?.token === token
+        ) setAuthFiles(response.files);
+      } catch {
+        if (
+          revision === apiClient.getConnectionRevision() &&
+          authFilesRequest.current?.token === token
+        ) setAuthFiles(null);
+      }
+    })();
+    authFilesRequest.current = { revision, token, promise: request };
+    await request;
+    if (authFilesRequest.current?.token === token) authFilesRequest.current = null;
   }, [connected]);
+
+  useInterval(() => {
+    if (document.visibilityState !== 'hidden') void loadAuthFiles();
+  }, connected ? 30_000 : null);
 
   const loadModels = useCallback(async () => {
     if (!connected || !apiBase) return;
