@@ -197,6 +197,17 @@
   gap: 16px;
 }
 
+.quotaPanelActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.quotaLoadButton {
+  gap: 6px;
+}
+
 .sectionTitle {
   margin: 0;
   font-size: 16px;

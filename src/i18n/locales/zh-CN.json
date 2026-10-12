@@ -223,7 +223,11 @@
     "cta_system_desc": "版本详情与管理中心信息。",
     "window_m": "{{minutes}} 分钟",
     "window_h": "{{hours}} 小时",
-    "window_hm": "{{hours}} 小时 {{minutes}} 分"
+    "window_hm": "{{hours}} 小时 {{minutes}} 分",
+    "quota_title": "剩余额度",
+    "quota_subtitle": "按提供商汇总各凭证的剩余容量。",
+    "quota_load_all": "加载额度",
+    "quota_open": "额度管理"
   },
   "basic_settings": {
     "debug_enable": "启用调试模式",
@@ -1603,7 +1607,24 @@
     "weekday_wed": "三",
     "weekday_thu": "四",
     "weekday_fri": "五",
-    "weekday_sat": "六"
+    "weekday_sat": "六",
+    "view_label": "视图",
+    "view_ledger": "台账",
+    "view_cards": "卡片",
+    "ledger_summary_label": "各提供商剩余额度",
+    "ledger_credentials_one": "{{count}} 个凭证",
+    "ledger_credentials_other": "{{count}} 个凭证",
+    "ledger_of": "/ {{capacity}}",
+    "ledger_segments_label": "{{window}}：已加载 {{loaded}} / {{total}} 个凭证",
+    "ledger_no_data": "尚未加载额度",
+    "ledger_not_loaded": "尚未加载",
+    "ledger_no_reset": "无待重置",
+    "ledger_no_windows": "未报告额度窗口",
+    "ledger_disabled": "已停用",
+    "ledger_load": "加载额度",
+    "ledger_refresh": "刷新额度",
+    "ledger_weekly_limit": "每周限额",
+    "ledger_billing": "账单周期"
   },
   "plugin_management": {
     "title": "插件管理",

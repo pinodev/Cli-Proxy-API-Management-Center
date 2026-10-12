@@ -1,0 +1,207 @@
+@use '../../../styles/mixins' as *;
+
+/* Provider headroom strip: one bordered band split into equal cells,
+ * big remaining figure, segmented per-credential meter, soonest reset. */
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 18px 20px 16px;
+  border: 0;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  margin: 0 -1px -1px 0;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+}
+
+button.card {
+  cursor: pointer;
+  transition: background-color 160ms ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: -2px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button.card:hover {
+    background: var(--bg-tertiary);
+  }
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  margin-bottom: 6px;
+}
+
+.iconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.iconFallback {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.provider {
+  font-size: 15px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.count {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.windowLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.figure {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.value {
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.capacity {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* One segment per credential; each fills by its own remaining percent. */
+.segments {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.segment {
+  position: relative;
+  flex: 1 1 0;
+  height: 4px;
+  border-radius: $radius-full;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.segmentFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  transition: width 360ms var(--ease-out-strong, ease);
+
+  &[data-tone='high'] {
+    background: var(--viz-success);
+  }
+
+  &[data-tone='medium'] {
+    background: var(--quota-medium-color);
+  }
+
+  &[data-tone='low'] {
+    background: var(--viz-failure);
+  }
+}
+
+.reset {
+  display: flex;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.resetRelative {
+  color: var(--text-secondary);
+}
+
+.resetAbsolute::before {
+  content: '·';
+  margin-right: 6px;
+}
+
+.attention {
+  color: var(--viz-failure);
+}
+
+.secondary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segmentFill,
+  button.card {
+    transition: none;
+  }
+}
+
+@include mobile {
+  .card {
+    padding: 16px;
+  }
+
+  .value {
+    font-size: 26px;
+  }
+}

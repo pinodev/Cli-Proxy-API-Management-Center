@@ -222,7 +222,11 @@
     "cta_system_desc": "Информация о версии и центре управления.",
     "window_m": "{{minutes}} мин",
     "window_h": "{{hours}} ч",
-    "window_hm": "{{hours}} ч {{minutes}} мин"
+    "window_hm": "{{hours}} ч {{minutes}} мин",
+    "quota_title": "Остаток квоты",
+    "quota_subtitle": "Оставшаяся ёмкость по провайдерам, суммарно по учётным записям.",
+    "quota_load_all": "Загрузить квоты",
+    "quota_open": "Управление квотами"
   },
   "basic_settings": {
     "debug_enable": "Включить режим отладки",
@@ -1608,7 +1612,26 @@
     "weekday_wed": "Ср",
     "weekday_thu": "Чт",
     "weekday_fri": "Пт",
-    "weekday_sat": "Сб"
+    "weekday_sat": "Сб",
+    "view_label": "Вид",
+    "view_ledger": "Реестр",
+    "view_cards": "Карточки",
+    "ledger_summary_label": "Остаток квоты по провайдерам",
+    "ledger_credentials_one": "{{count}} учётная запись",
+    "ledger_credentials_few": "{{count}} учётные записи",
+    "ledger_credentials_many": "{{count}} учётных записей",
+    "ledger_credentials_other": "{{count}} учётных записей",
+    "ledger_of": "из {{capacity}}",
+    "ledger_segments_label": "{{window}}: загружено {{loaded}} из {{total}}",
+    "ledger_no_data": "Квота не загружена",
+    "ledger_not_loaded": "Ещё не загружено",
+    "ledger_no_reset": "Сброс не ожидается",
+    "ledger_no_windows": "Окна квоты не сообщены",
+    "ledger_disabled": "Отключено",
+    "ledger_load": "Загрузить квоту",
+    "ledger_refresh": "Обновить квоту",
+    "ledger_weekly_limit": "Недельный лимит",
+    "ledger_billing": "Расчётный период"
   },
   "plugin_management": {
     "title": "Управление плагинами",

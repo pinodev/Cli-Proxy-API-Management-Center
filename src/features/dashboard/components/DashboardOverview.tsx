@@ -13,10 +13,11 @@ import {
   IconSidebarSystem,
 } from '@/components/ui/icons';
 import { getAuthFileIcon } from '@/features/authFiles/constants';
-import type { Config, ConnectionStatus, ResolvedTheme } from '@/types';
+import type { AuthFileItem, Config, ConnectionStatus, ResolvedTheme } from '@/types';
 import { formatCompactNumber, formatDateValue, formatPercent } from '@/utils/format';
 import type { CredentialHealth, DashboardCounts, ProviderTraffic, TrafficWindow } from '../types';
 import { providerLabel, splitWindowMinutes } from '../utils';
+import { DashboardQuotaPanel } from './DashboardQuotaPanel';
 import { Meter } from './Meter';
 import { Sparkline } from './Sparkline';
 import { ThroughputChart } from './ThroughputChart';
@@ -32,6 +33,7 @@ interface DashboardOverviewProps {
   traffic: TrafficWindow;
   providers: ProviderTraffic[];
   credentials: CredentialHealth | null;
+  authFiles: AuthFileItem[] | null;
   serverVersion: string | null;
   serverBuildDate: string | null;
   resolvedTheme: ResolvedTheme;
@@ -47,6 +49,7 @@ export function DashboardOverview({
   traffic,
   providers,
   credentials,
+  authFiles,
   serverVersion,
   serverBuildDate,
   resolvedTheme,
@@ -231,6 +234,12 @@ export function DashboardOverview({
           </div>
         ))}
       </section>
+
+      <DashboardQuotaPanel
+        authFiles={authFiles}
+        connected={connected}
+        resolvedTheme={resolvedTheme}
+      />
 
       <section className={styles.providerSection} aria-labelledby="dashboard-providers-title">
         <header className={styles.sectionHeader}>

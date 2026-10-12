@@ -223,7 +223,11 @@
     "cta_system_desc": "Version details and management center info.",
     "window_m": "{{minutes}}m",
     "window_h": "{{hours}}h",
-    "window_hm": "{{hours}}h {{minutes}}m"
+    "window_hm": "{{hours}}h {{minutes}}m",
+    "quota_title": "Quota headroom",
+    "quota_subtitle": "Remaining capacity per provider, summed across credentials.",
+    "quota_load_all": "Load quotas",
+    "quota_open": "Quota Management"
   },
   "basic_settings": {
     "debug_enable": "Enable Debug Mode",
@@ -1605,7 +1609,24 @@
     "weekday_wed": "Wed",
     "weekday_thu": "Thu",
     "weekday_fri": "Fri",
-    "weekday_sat": "Sat"
+    "weekday_sat": "Sat",
+    "view_label": "View",
+    "view_ledger": "Ledger",
+    "view_cards": "Cards",
+    "ledger_summary_label": "Quota headroom by provider",
+    "ledger_credentials_one": "{{count}} credential",
+    "ledger_credentials_other": "{{count}} credentials",
+    "ledger_of": "of {{capacity}}",
+    "ledger_segments_label": "{{window}}: {{loaded}} of {{total}} credentials loaded",
+    "ledger_no_data": "No quota loaded",
+    "ledger_not_loaded": "Not loaded yet",
+    "ledger_no_reset": "No reset pending",
+    "ledger_no_windows": "No quota windows reported",
+    "ledger_disabled": "Disabled",
+    "ledger_load": "Load quota",
+    "ledger_refresh": "Refresh quota",
+    "ledger_weekly_limit": "Weekly limit",
+    "ledger_billing": "Billing cycle"
   },
   "plugin_management": {
     "title": "Plugin Management",

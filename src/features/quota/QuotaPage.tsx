@@ -26,14 +26,19 @@ import { ProviderTabs } from '@/features/authFiles/components/ProviderTabs';
 import { QuotaHeader } from './components/QuotaHeader';
 import { QuotaCard } from './components/QuotaCard';
 import { QuotaTimeline } from './components/QuotaTimeline';
+import { QuotaLedger } from './components/QuotaLedger';
+import { QuotaSummaryStrip } from './components/QuotaSummaryStrip';
 import {
   CARD_ENTRANCE_BUDGET_MS,
   QUOTA_PAGE_SIZE,
   QUOTA_SORT_MODES,
   QUOTA_TAB_ORDER,
+  QUOTA_VIEW_MODES,
   type QuotaSortMode,
   type QuotaTabId,
+  type QuotaViewMode,
 } from './constants';
+import { summarizeProvider } from './quotaLedgerModel';
 import {
   buildTabCounts,
   canRefreshQuotaAfterList,
@@ -73,6 +78,9 @@ export function QuotaPage() {
   const [tab, setTab] = useState<QuotaTabId>(() => readQuotaUiState()?.tab ?? 'all');
   const [sortMode, setSortMode] = useState<QuotaSortMode>(
     () => readQuotaUiState()?.sortMode ?? 'default'
+  );
+  const [viewMode, setViewMode] = useState<QuotaViewMode>(
+    () => readQuotaUiState()?.viewMode ?? 'ledger'
   );
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -160,6 +168,8 @@ export function QuotaPage() {
   // 换一次身份，会反复空转下面那个「刷新全部」的 loading 下降沿 effect。
   const tick = useNow(sortMode !== 'default');
   const sortNow = sortMode === 'default' ? 0 : tick;
+  // Countdowns in the summary strip and ledger rows; never feeds sorting.
+  const displayNow = useNow();
 
   const entries = useMemo(() => classifyQuotaFiles(files), [files]);
   const tabCounts = useMemo(() => buildTabCounts(entries), [entries]);
@@ -204,6 +214,30 @@ export function QuotaPage() {
       QUOTA_SORT_MODES.map((mode) => ({ value: mode, label: t(`quota_management.sort_${mode}`) })),
     [t]
   );
+
+  const handleViewModeChange = useCallback((next: string) => {
+    setViewMode(next as QuotaViewMode);
+    writeQuotaUiState({ viewMode: next as QuotaViewMode });
+  }, []);
+
+  const viewOptions = useMemo(
+    () =>
+      QUOTA_VIEW_MODES.map((mode) => ({ value: mode, label: t(`quota_management.view_${mode}`) })),
+    [t]
+  );
+
+  // The strip always covers every credential, whatever tab or search is active.
+  const summaries = useMemo(() => {
+    const inputs = entries.map((entry) => ({
+      key: getQuotaCacheKey(entry.file),
+      name: entry.file.name,
+      type: entry.type,
+      quota: quotaByType[entry.type][getQuotaCacheKey(entry.file)],
+    }));
+    return QUOTA_TAB_ORDER.filter((type) => tabCounts[type] > 0).map((type) =>
+      summarizeProvider(type, inputs)
+    );
+  }, [entries, quotaByType, tabCounts]);
 
   const { loadedCount, attentionCount } = useMemo(() => {
     let loaded = 0;
@@ -362,16 +396,36 @@ export function QuotaPage() {
               </button>
             )}
           </div>
-          <div className={styles.sort}>
-            <Select
-              value={sortMode}
-              options={sortOptions}
-              onChange={handleSortModeChange}
-              ariaLabel={t('quota_management.sort_label')}
-              size="sm"
-            />
+          <div className={styles.toolbarControls}>
+            <div className={styles.sort}>
+              <Select
+                value={viewMode}
+                options={viewOptions}
+                onChange={handleViewModeChange}
+                ariaLabel={t('quota_management.view_label')}
+                size="sm"
+              />
+            </div>
+            <div className={styles.sort}>
+              <Select
+                value={sortMode}
+                options={sortOptions}
+                onChange={handleSortModeChange}
+                ariaLabel={t('quota_management.sort_label')}
+                size="sm"
+              />
+            </div>
           </div>
         </div>
+
+        {!loading && (
+          <QuotaSummaryStrip
+            summaries={tab === 'all' ? summaries : summaries.filter((item) => item.type === tab)}
+            resolvedTheme={resolvedTheme}
+            now={displayNow}
+            onSelect={tab === 'all' ? handleTabChange : undefined}
+          />
+        )}
 
         {error && (
           <div className={styles.errorBanner} role="alert">
@@ -412,6 +466,14 @@ export function QuotaPage() {
                 </Button>
               )
             }
+          />
+        ) : viewMode === 'ledger' ? (
+          <QuotaLedger
+            entries={pageItems}
+            quotaFor={getQuota}
+            now={displayNow}
+            canRefresh={(entry) => canUseActions && !entry.file.disabled}
+            onRefresh={(entry) => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
           />
         ) : (
           <div className={styles.grid}>
